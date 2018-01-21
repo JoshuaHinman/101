@@ -1,0 +1,43 @@
+# calculator messages
+
+en:
+  welcome: "Welcome to calculator! Please enter your name:"
+  name_error: "Please enter a valid name:"
+  greet: "Hello, "
+  num1_prompt: "Enter the first number:"
+  num2_prompt: "Enter the second number:"
+  num_error: "This isn't a valid number."
+  operator_prompt: "What operation would you like to perform?\n
+        \t1)Add\n
+        \t2)Subtract\n
+        \t3)Multiply\n
+        \t4)Divide\n"
+  operator_error: "Must choose 1, 2, 3 or 4"
+  adding: "adding"
+  subtracting: "subtracting"
+  multiplying: "multiplying"
+  dividing: "dividing"
+  operator_display: " these two numbers..."
+  result_display: "The result is: "
+  new_calculation_prompt: "Would you like to perform another calculation? y/n"
+
+es:
+  welcome: "Bienvenidos al calculador! Por favor entre su nombre:"
+  name_error: "Por favor entre un nombre valido:"
+  greet: "Hola, "
+  num1_prompt: "Entre el primer numero:"
+  num2_prompt: "Entre el segundo numero:"
+  num_error: "Este numero no es valido."
+  operator_prompt: "Cual operacion quiere performar?\n
+        \t1)Añadir\n
+        \t2)Sustraer\n
+        \t3)Multiplicar\n
+        \t4)Dividir\n"
+  operator_error: "Por favor escoge 1, 2, 3 or 4"
+  adding: "añadiendo"
+  subtracting: "sustrayendo"
+  multiplying: "multiplicando"
+  dividing: "dividiendo"
+  operator_display: " los dos numeros..."
+  result_display: "El resultado es: "
+  new_calculation_prompt: "Le gustaria performar otro operacion? y/n"

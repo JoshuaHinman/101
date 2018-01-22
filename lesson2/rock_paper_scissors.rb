@@ -26,56 +26,86 @@ def display_result(player, computer)
   computer_result = result_with_message(computer, player)
   if player_result
     prompt(player_result << '!')
-    prompt("You won!")
+    prompt("You won the round!")
   elsif computer_result
     prompt(computer_result << '!')
-    prompt("Computer won!")
+    prompt("Computer won the round!")
   else
     prompt("It's a tie!")
   end
 end
 
-computer_score = 0
-player_score = 0
-quit = false
-rules = false
+def game_end?(player, computer)
+  if player == 5
+    prompt("You won the match!")
+    true
+  elsif computer == 5
+    prompt("Computer won the match!")
+    true
+  end
+end
 
-system('clear') || system('cls')
-loop do
-  choice = ''
+def play_again?
+  prompt("Play again? y/n")
+  answer = Kernel.gets().chomp().downcase
+  if answer == 'y'
+    true
+  else
+    false
+  end
+end
+
+quit = false
+while quit == false
+
+  # initialize game
+  computer_score = 0
+  player_score = 0
+  rules = false
+
+  system('clear') || system('cls')
   loop do
-    prompt("Choose one: #{VALID_CHOICES.join(', ')} (or rules, quit)")
-    choice = Kernel.gets().chomp().downcase()
-    ABBREVIATIONS.each { |k, v| k == choice ? choice = v : false }
-    if VALID_CHOICES.include?(choice)
-      break
-    elsif choice == 'quit'
-      quit = true
-      break
-    elsif choice == 'rules'
-      rules = true
-      break
-    else
-      prompt("Thats' not a valid choice.")
+    choice = ''
+    loop do
+      prompt("Choose one: #{VALID_CHOICES.join(', ')} (or rules, quit)")
+      choice = Kernel.gets().chomp().downcase()
+      ABBREVIATIONS.each { |k, v| k == choice ? choice = v : false }
+      if VALID_CHOICES.include?(choice)
+        break
+      elsif choice == 'quit'
+        quit = true
+        break
+      elsif choice == 'rules'
+        rules = true
+        break
+      else
+        prompt("Thats' not a valid choice.")
+      end
     end
+
+    break if quit == true
+
+    if rules == true
+      rules = false
+      WINS.each { |w| puts w.map(&:capitalize).join(' ') }
+    else
+      computer_choice = VALID_CHOICES.sample
+
+      prompt("You chose: #{choice} , Computer chose: #{computer_choice}")
+      display_result(choice, computer_choice)
+
+      if result_with_message(choice, computer_choice)
+        player_score += 1
+      elsif result_with_message(computer_choice, choice)
+        computer_score += 1
+      end
+      prompt("Player Score #{player_score} <> Computer Score #{computer_score}")
+    end
+
+    break if game_end?(player_score, computer_score)
   end
 
-  break if quit == true
-
-  if rules == true
-    rules = false
-    WINS.each { |w| puts w.map(&:capitalize).join(' ') }
-  else
-    computer_choice = VALID_CHOICES.sample
-
-    prompt("You chose: #{choice} , Computer chose: #{computer_choice}")
-    display_result(choice, computer_choice)
-
-    if result_with_message(choice, computer_choice)
-      player_score += 1
-    elsif result_with_message(computer_choice, choice)
-      computer_score += 1
-    end
-    prompt("Player Score #{player_score} <<>> Computer Score #{computer_score}")
+  if quit == false
+    quit = !play_again?
   end
 end

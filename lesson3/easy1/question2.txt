@@ -1,0 +1,6 @@
+! is the Not operator , ? can be a ternary operator or normal character 
+1. What is  !=  - Not equal to
+2. ! before something makes it the boolean opposite
+3. ! after a method often indicates a self mutating method call
+4, 5. ? before or after something - part of a ternary "if" expression
+6.  !! means Not Not - makes boolean equivalent of a value

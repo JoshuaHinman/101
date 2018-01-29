@@ -1,0 +1,1 @@
+10.times { |s| puts ' '*s <<"The Flintstones Rock!"}

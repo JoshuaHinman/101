@@ -1,0 +1,1 @@
+puts ['ant', 'bear', 'caterpillar'].pop.size

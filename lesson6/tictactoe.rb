@@ -271,14 +271,13 @@ loop do
   turn = ['player', 'computer'].sample
   prompt "#{turn.capitalize} goes first"
   sleep(0.8)
-  loop do
-    
 
+  loop do
     display_board(board)
     # display output from AI scan
     win, block, setup = scan_win_lines(player[:marker], win_lines, board)
     puts "win move:#{win}  block move:#{block}  setup move:#{setup}"
-    
+
     place_piece!(turn, player[:marker], computer[:marker], win_lines, board)
     if turn == 'computer'
       sleep(0.3)

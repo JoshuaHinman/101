@@ -1,6 +1,7 @@
 
 DIFFICULTY = 1 # 0 for random , 1 for AI
 INITIAL_MARKER = ' '
+WINS_IN_MATCH = 3
 
 def prompt(msg)
   puts "=> #{msg}"
@@ -140,7 +141,6 @@ def player_places_piece!(marker, brd)
     prompt "Choose an empty square (#{joinor(empty_squares(brd))})"
     square = gets.chomp.to_i
     if empty_squares(brd).include?(square)
-      # or if (1..9).include?(square) && brd[square] == ' '
       break
     else
       prompt "That's not an open square."
@@ -221,11 +221,11 @@ def win?(brd, active, win_lines)
   win
 end
 
-def won_5?(player, computer)
-  if player == 3
+def won_match?(player, computer)
+  if player == WINS_IN_MATCH
     prompt "You win the match!"
     true
-  elsif computer == 3
+  elsif computer == WINS_IN_MATCH
     prompt "Computer wins the match!"
     true
   end
@@ -244,6 +244,10 @@ def play_again?
   end
 end
 
+def clear_screen
+  system('clear') || system('cls')
+end
+
 player = { score: 0, marker: 'X', win_message: "You win!" }
 computer = { score: 0, marker: 'O', win_message: "Computer wins!" }
 display_board({ 1 => 'T', 2 => 'I', 3 => 'C',
@@ -252,7 +256,7 @@ display_board({ 1 => 'T', 2 => 'I', 3 => 'C',
 puts ["Shall we play a game?", "Time to play!", "Let's play!"].sample.center(18)
 puts "Press Enter".center(18)
 gets
-system('clear') || system('cls')
+clear_screen
 prompt "First to three wins takes the match!"
 prompt "Do you want numbered squares? y/n"
 if gets.chomp.downcase == 'y'
@@ -262,7 +266,7 @@ else
 end
 prompt "Enter board size (3-6)"
 size = gets.chomp.to_s.to_i
-system('clear') || system('cls')
+clear_screen
 
 loop do
   board = new_board(size, size)
@@ -279,9 +283,7 @@ loop do
     puts "win move:#{win}  block move:#{block}  setup move:#{setup}"
 
     place_piece!(turn, player[:marker], computer[:marker], win_lines, board)
-    if turn == 'computer'
-      sleep(0.3)
-    end
+    sleep(0.3) if turn == 'computer'
     break if win?(board, player, win_lines) ||
              win?(board, computer, win_lines) ||
              board_full?(board)
@@ -289,7 +291,7 @@ loop do
   end
   prompt "Computer: #{computer[:score]} <<>> You: #{player[:score]}"
 
-  if won_5?(player[:score], computer[:score])
+  if won_match?(player[:score], computer[:score])
     if !play_again?
       break
     else
@@ -300,7 +302,7 @@ loop do
     prompt "Press Enter"
     gets
   end
-  system('clear') || system('cls')
+  clear_screen
 end
 
 prompt "Good game! Thanks for playing!"

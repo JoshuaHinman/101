@@ -1,9 +1,6 @@
 
 DIFFICULTY = 1 # 0 for random , 1 for AI
 INITIAL_MARKER = ' '
-#WIN_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9],
-             #[1, 4, 7], [2, 5, 8], [3, 6, 9],
-             #[1, 5, 9], [3, 5, 7]]
 
 def prompt(msg)
   puts "=> #{msg}"
@@ -29,14 +26,14 @@ def new_board(width, height)
   board
 end
 
-def display_board(brd, numbered_squares)
+def display_board(brd)
   empty_line = ("     |" * brd[:width]).chop
   divider_line = ("-----+" * brd[:width]).chop
 
   system('clear') || system('cls')
   num = 1
   (brd[:height] - 1).times do
-    if numbered_squares == 1
+    if brd[:numbered_squares] == 1
       puts numbered_line(num, brd)
     else
       puts empty_line
@@ -46,7 +43,7 @@ def display_board(brd, numbered_squares)
     puts divider_line
     num += brd[:width]
   end
-  if numbered_squares == 1
+  if brd[:numbered_squares] == 1
     puts numbered_line(num, brd)
   else
     puts empty_line
@@ -111,7 +108,7 @@ def xy_to_index(x, y, width)
   (y * width) + x + 1
 end
 
-def in_bounds(x , y, brd)
+def in_bounds(x, y, brd)
   width = brd[:width]
   height = brd[:height]
   x >= 0 && x < width && y >= 0 && y < height
@@ -202,19 +199,19 @@ def scan_win_lines(marker, lines, brd)
   return win_move, block_move, setup_move
 end
 
-def board_full?(brd, numbered_squares)
+def board_full?(brd)
   if brd.all? { |_, v| v != ' ' }
-    display_board(brd, numbered_squares)
+    display_board(brd)
     prompt "Tie game!"
     true
   end
 end
 
-def win?(brd, active, win_lines, numbered_squares)
+def win?(brd, active, win_lines)
   win = false
   win_lines.each do |a|
     if a.all? { |s| brd[s] == brd[a[0]] } && brd[a[0]] == active[:marker]
-      display_board(brd, numbered_squares)
+      display_board(brd)
       prompt active[:win_message]
       active[:score] += 1
       win = true
@@ -251,7 +248,7 @@ player = { score: 0, marker: 'X', win_message: "You win!" }
 computer = { score: 0, marker: 'O', win_message: "Computer wins!" }
 display_board({ 1 => 'T', 2 => 'I', 3 => 'C',
                 4 => 'T', 5 => 'A', 6 => 'C',
-                7 => 'T', 8 => 'O', 9 => 'E', :width => 3, :height => 3 }, 0)
+                7 => 'T', 8 => 'O', 9 => 'E', :width => 3, :height => 3, :numbered_squares => 0 })
 puts ["Shall we play a game?", "Time to play!", "Let's play!"].sample.center(18)
 puts "Press Enter".center(18)
 gets
@@ -269,23 +266,26 @@ system('clear') || system('cls')
 
 loop do
   board = new_board(size, size)
+  board[:numbered_squares] = numbered_squares
   win_lines = generate_win_lines(board)
   turn = ['player', 'computer'].sample
   prompt "#{turn.capitalize} goes first"
   sleep(0.8)
   loop do
-    # display output from AI scan
-    # win, block, setup = scan_win_lines(player[:marker], win_lines, board)
-    # puts "win move:#{win}  block move:#{block}  setup move:#{setup}"
+    
 
-    display_board(board, numbered_squares)
+    display_board(board)
+    # display output from AI scan
+    win, block, setup = scan_win_lines(player[:marker], win_lines, board)
+    puts "win move:#{win}  block move:#{block}  setup move:#{setup}"
+    
     place_piece!(turn, player[:marker], computer[:marker], win_lines, board)
     if turn == 'computer'
       sleep(0.3)
     end
-    break if win?(board, player, win_lines, numbered_squares) || 
-             win?(board, computer, win_lines, numbered_squares) || 
-             board_full?(board, numbered_squares)
+    break if win?(board, player, win_lines) ||
+             win?(board, computer, win_lines) ||
+             board_full?(board)
     turn = alternate_turn(turn)
   end
   prompt "Computer: #{computer[:score]} <<>> You: #{player[:score]}"

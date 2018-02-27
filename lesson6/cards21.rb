@@ -22,8 +22,8 @@ end
 
 def initialize_deck
   card_deck = []
-  CARD_SUITS.each do |s|
-    card_deck << CARD_VALUES.map { |c| c + s }
+  CARD_SUITS.each do |suit|
+    card_deck << CARD_VALUES.map { |c| c + suit }
   end
   card_deck.flatten
 end
@@ -54,23 +54,23 @@ def display_cards(cards, first_card_face_down = false)
   card_num = hand.length
   hand[0] = '  ' if first_card_face_down
   puts CARD_TOP * card_num
-  hand.each { |v| print '|' + v + '  |' }
+  hand.each { |val| print '|' + val + '  |' }
   puts
   puts CARD_SIDES * card_num
-  hand.each { |v| print '|  ' + v + '|' }
+  hand.each { |val| print '|  ' + val + '|' }
   puts
   puts CARD_BOTTOM * card_num
 end
 
 def calculate_hand_value(hand)
   total = [0]
-  hand.each do |v|
-    if %w[J Q K].include?(v.chop)
-      total.each_with_index { |t, i| total[i] = t + 10 }
-    elsif v.chop == 'A'
+  hand.each do |val|
+    if %w[J Q K].include?(val.chop)
+      total.each_with_index { |ttl, indx| total[indx] = ttl + 10 }
+    elsif val.chop == 'A'
       total = split_ace(total)
     else
-      total.each_with_index { |t, i| total[i] = t + v.chop.to_i }
+      total.each_with_index { |ttl, indx| total[indx] = ttl + val.chop.to_i }
     end
   end
   while total.last > TOP_SCORE && total.length > 1
@@ -81,8 +81,8 @@ end
 
 def split_ace(arr)
   new_arr = []
-  arr.each do |v|
-    new_arr << v + 1 << v + 11
+  arr.each do |val|
+    new_arr << val + 1 << val + 11
   end
   new_arr.sort!
 end
@@ -102,19 +102,17 @@ def input_h_or_s(question)
   end
 end
 
-def determine_winner(dealer, player)
-  player = 0 if player > TOP_SCORE
-  dealer = 0 if dealer > TOP_SCORE
-  if dealer > player
+def determine_round_winner(dealer, player)
+  if (dealer > player && dealer <= 21) || player > 21
     'dealer'
-  elsif dealer < player
+  elsif (dealer < player && player <= 21) || dealer > 21
     'player'
   else
     'tie'
   end
 end
 
-def display_winner(winner)
+def display_round_winner(winner)
   case winner
   when 'dealer'
     pause_prompt("Dealer wins!", 1.0)
@@ -182,10 +180,9 @@ def bust(dealer, player, active)
   active[:bust] = true
   refresh_cards_display(dealer, player, false)
   pause_prompt "#{active[:name]} busts!"
-  active[:total] = 0
 end
 
-def match_won?(dealer, player)
+def match_win(dealer, player)
   if dealer[:score] == MATCH_WINS
     'Dealer'
   elsif player[:score] == MATCH_WINS
@@ -198,14 +195,13 @@ def play_again?
   prompt "Play again? y/n"
   loop do
     answer = gets.chomp.downcase
-    if answer == 'y'
-      return true
-    elsif answer == 'n'
-      return false
+    if answer == 'y' || answer == 'n'
+      break
     else
       prompt "Please enter y or n"
     end
   end
+  answer == 'y'
 end
 
 def deal_hands(game_deck, player, dealer)
@@ -240,25 +236,25 @@ loop do
     game_deck = shuffled_deck(game_deck)
     deal_hands(game_deck, player, dealer)
 
-    player_move(player, dealer, game_deck) if player[:total] != TOP_SCORE
+    player_move(player, dealer, game_deck) unless player[:total] == TOP_SCORE
 
-    dealer_move(player, dealer, game_deck) if !player[:bust]
+    dealer_move(player, dealer, game_deck) unless player[:bust]
 
-    winner = determine_winner(dealer[:total], player[:total])
+    winner = determine_round_winner(dealer[:total], player[:total])
     prompt "dealer: #{dealer[:total]} player:#{player[:total]}"
-    display_winner(winner)
+    display_round_winner(winner)
 
     dealer[:score], player[:score] = update_score(winner, dealer, player)
     pause_prompt("player: #{player[:score]} <> Dealer: #{dealer[:score]}", 1.0)
 
-    match_win = match_won?(dealer, player) 
-    if match_win
-      prompt "#{match_win} wins the match!"
+    match_winner = match_win(dealer, player) 
+    if match_win(dealer, player)
+      prompt "#{match_winner} wins the match!"
       break
     else
       wait_prompt "Press Enter"
     end
     discard_hands(dealer, player)
   end
-  break if !play_again?
+  break unless play_again?
 end

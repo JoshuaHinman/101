@@ -1,3 +1,9 @@
-hsh = {first: ['the', 'quick'], second: ['brown', 'fox'], 
-        third: ['jumped'], fourth: ['over', 'the', 'lazy', 'dog']}
+a = 2
+b = [5, 8]
+arr = [a, b]
 
+arr[0] += 2
+arr[1][0] -= a
+
+a # => 2
+b # => [3, 8]

@@ -1,3 +1,4 @@
+
 def hexadecimal_to_integer(str)
   num = 0
   str = str.bytes

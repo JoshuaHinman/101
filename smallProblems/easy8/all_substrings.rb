@@ -1,11 +1,14 @@
-def all_substrings(string)
+def sort_by_substring(string)
   out_arr = []
-  0.upto(string.length - 1) do |lp|
-    lp.upto(string.length - 1) do |seg|
-    out_arr << string[lp..seg]
-    end
+  0.upto(string.length - 1) do |seg|
+    out_arr << string[0..seg]
   end
   out_arr
 end
 
-p all_substrings('hello')
+def all_substrings(string)
+  out_arr = []
+  0.upto(string.length)
+    out_arr << sort_by_substring string.slice(0, seg)
+  out_arr
+end
